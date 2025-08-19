@@ -1,110 +1,123 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Buscador en Amazon</title>
-  <link rel="manifest" href="./manifest.json">
-  <link rel="icon" href="./icon-192.png">
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").catch(console.error);
-    }
-  </script>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="icon" href="icon-192.png" />
   <style>
     body {
       font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #fff8f0;
       text-align: center;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      margin-top: 40px;
     }
     h1 {
-      font-size: 1.5em;
-      margin-bottom: 20px;
-      color: #ff9900;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    p {
+      margin: 10px 0 20px;
     }
     input[type="text"] {
-      width: 80%;
-      padding: 12px;
-      font-size: 1em;
-      border: 2px solid #ff9900;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      padding: 10px;
+      width: 70%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
     button {
-      padding: 12px 20px;
-      font-size: 1em;
-      background-color: #ff9900;
-      color: white;
+      padding: 10px 15px;
+      margin-left: 5px;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
+      background: #ff9900;
+      color: #fff;
+      font-weight: bold;
       cursor: pointer;
-      margin-bottom: 10px;
     }
     button:hover {
-      background-color: #e68a00;
-    }
-    #addButton {
-      display: none;
-      margin-top: 10px;
+      background: #e68a00;
     }
     footer {
-      font-size: 0.8em;
-      color: #555;
-      margin-top: 20px;
-      max-width: 90%;
+      margin-top: 40px;
+      font-size: 12px;
+      color: #666;
+      padding: 0 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Buscador en Amazon</h1>
+  <div class="container">
+    <!-- Logotipo -->
+    <img src="icon-192.png" alt="Logo" style="width:100px; height:100px; margin-bottom:10px;">
 
-  <form id="searchForm">
-    <input type="text" id="query" placeholder="Escribe lo que buscas..." required>
-    <button type="submit">Buscar</button>
-  </form>
+    <!-- Título -->
+    <h1>Buscador en Amazon</h1>
 
-  <button id="addButton">Añadir a pantalla de inicio</button>
+    <!-- Texto introductorio -->
+    <p>Escribe lo que buscas y te lo mostraré en Amazon</p>
 
-  <footer>
-    Participamos en el <strong>Programa de Afiliados de Amazon</strong> 
-    para obtener ingresos por las compras que cumplan los requisitos.
-  </footer>
+    <!-- Barra de búsqueda -->
+    <form id="searchForm">
+      <input type="text" id="query" placeholder="Buscar productos..." required />
+      <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Botón de añadir a pantalla de inicio -->
+    <button id="installBtn" style="display:none; margin-top:15px;">
+      📱 Añadir a pantalla de inicio
+    </button>
+
+    <!-- Aviso de Amazon Afiliados -->
+    <footer>
+      <p>
+        Participamos en el Programa de Afiliados de Amazon, un programa de publicidad para afiliados 
+        diseñado para ofrecer un modo de obtener comisiones mediante la publicidad y enlaces a Amazon.es.
+      </p>
+    </footer>
+  </div>
 
   <script>
-    // Búsqueda en Amazon con afiliado
-    const form = document.getElementById('searchForm');
-    form.addEventListener('submit', (e) => {
+    // Búsqueda con ID de afiliado fijo
+    const affiliateId = "garrapachuno-21";
+    const country = "es"; // Amazon España
+
+    document.getElementById("searchForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const query = encodeURIComponent(document.getElementById('query').value.trim());
-      if (!query) return;
-      const affiliateID = "garrapachuno-21";
-      const amazonURL = `https://www.amazon.es/s?k=${query}&tag=${affiliateID}`;
-      window.location.href = amazonURL;
+      const query = document.getElementById("query").value.trim();
+      if(query){
+        const url = `https://www.amazon.${country}/s?k=${encodeURIComponent(query)}&tag=${affiliateId}`;
+        window.location.href = url;
+      }
     });
 
-    // PWA: Añadir a pantalla de inicio
+    // PWA instalación
     let deferredPrompt;
-    const addBtn = document.getElementById('addButton');
+    const installBtn = document.getElementById("installBtn");
 
-    window.addEventListener('beforeinstallprompt', (e) => {
+    window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      addBtn.style.display = 'inline-block';
+      installBtn.style.display = "inline-block";
     });
 
-    addBtn.addEventListener('click', () => {
-      addBtn.style.display = 'none';
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
+    installBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === "accepted") {
+          installBtn.style.display = "none";
+        }
         deferredPrompt = null;
-      });
+      }
     });
   </script>
 </body>
-</html>
+  </html>
