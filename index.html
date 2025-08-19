@@ -2,177 +2,66 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Buscador de Amazon (Afiliados)</title>
-  <meta name="description" content="Buscador simple que redirige a Amazon con tu ID de afiliado.">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ff9900">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alzo Browser - Buscador Amazon</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
   <style>
-    :root { --bg: #f6f6f6; --card: #ffffff; --text: #222; --accent: #ff9900; --accentHover: #e68a00; }
-    * { box-sizing: border-box; }
     body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: var(--bg);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      color: var(--text);
-    }
-    .card {
-      background: var(--card);
-      padding: 28px;
-      border-radius: 16px;
-      width: min(640px, 92vw);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+      background-color: #fff8f0;
       text-align: center;
     }
     h1 {
-      margin: 0 0 8px 0;
-      font-size: 1.45rem;
-    }
-    p.helper { margin: 0 0 18px 0; opacity: .8; }
-    form {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: #ff9900;
     }
     input[type="text"] {
-      padding: 12px 14px;
-      width: min(420px, 84vw);
-      border: 1px solid #d9d9d9;
-      border-radius: 10px;
-      font-size: 1rem;
-      outline: none;
+      width: 80%;
+      padding: 12px;
+      font-size: 1em;
+      border: 2px solid #ff9900;
+      border-radius: 8px;
+      margin-bottom: 10px;
     }
     button {
-      padding: 12px 18px;
-      border: 0;
-      border-radius: 10px;
-      font-weight: 700;
+      padding: 12px 20px;
+      font-size: 1em;
+      background-color: #ff9900;
+      color: white;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      background: var(--accent);
-      color: #111;
     }
-    button:hover { background: var(--accentHover); }
-    .foot {
-      margin-top: 18px;
-      font-size: .9rem;
-      opacity: .8;
-    }
-    .row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
-    select, input[type="text"].tag {
-      padding: 10px 12px;
-      border: 1px solid #d9d9d9;
-      border-radius: 10px;
-      font-size: .95rem;
-    }
-    small.code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      background: #f0f0f0;
-      padding: 2px 6px;
-      border-radius: 6px;
+    button:hover {
+      background-color: #e68a00;
     }
   </style>
 </head>
 <body>
-  <main class="card">
-    <h1>Busca en Amazon</h1>
-    <p class="helper">Escribe un producto y te llevaremos a Amazon con tu ID de afiliado.</p>
-
-    <div class="row">
-      <select id="market">
-        <option value="es" selected>Amazon.es</option>
-        <option value="com">Amazon.com</option>
-        <option value="mx">Amazon.com.mx</option>
-        <option value="co.uk">Amazon.co.uk</option>
-        <option value="de">Amazon.de</option>
-        <option value="fr">Amazon.fr</option>
-        <option value="it">Amazon.it</option>
-      </select>
-      <input class="tag" id="tag" type="text" placeholder="garrapachuno-21" aria-label="ID de afiliado (tag)">
-    </div>
-
-    <form id="searchForm" onsubmit="return buscar(event)">
-      <input type="text" id="query" placeholder="¿Qué quieres buscar?" autocomplete="on" autofocus>
-      <button type="submit" aria-label="Buscar en Amazon">Buscar</button>
-    </form>
-
-    <div style="margin-top:20px;">
-      <button onclick="guardarPagina()">⭐ Guardar esta página</button>
-    </div>
-
-    <div class="foot">
-      <div>Consejo: rellena tu <small class="code">tag</small> y elige el marketplace.</div>
-      <div style="margin-top:8px; font-size:.85rem;">Aviso de afiliación: como Afiliado de Amazon, gano con las compras que cumplen los requisitos.</div>
-    </div>
-  </main>
+  <h1>Escribe lo que buscas y te lo mostraré en Amazon</h1>
+  <form id="searchForm">
+    <input type="text" id="query" placeholder="Buscar producto..." required>
+    <button type="submit">Buscar</button>
+  </form>
 
   <script>
-    // Configuración por defecto
-    const DEFAULT_MARKET = "es";
-    const DEFAULT_TAG = "garrapachuno-21";
-    const MARKET_DOMAINS = {
-      "es": "https://www.amazon.es/s",
-      "com": "https://www.amazon.com/s",
-      "mx": "https://www.amazon.com.mx/s",
-      "co.uk": "https://www.amazon.co.uk/s",
-      "de": "https://www.amazon.de/s",
-      "fr": "https://www.amazon.fr/s",
-      "it": "https://www.amazon.it/s"
-    };
-
-    const marketEl = document.getElementById("market");
-    const tagEl = document.getElementById("tag");
-    marketEl.value = DEFAULT_MARKET;
-    tagEl.value = DEFAULT_TAG;
-
-    [marketEl, tagEl].forEach(el => {
-      el.addEventListener("change", () => {
-        localStorage.setItem("amazon_market", marketEl.value);
-        localStorage.setItem("amazon_tag", tagEl.value.trim());
-      });
-    });
-
-    window.addEventListener("DOMContentLoaded", () => {
-      const savedMarket = localStorage.getItem("amazon_market");
-      const savedTag = localStorage.getItem("amazon_tag");
-      if (savedMarket && MARKET_DOMAINS[savedMarket]) marketEl.value = savedMarket;
-      if (savedTag) tagEl.value = savedTag;
-    });
-
-    function buscar(e) {
+    const form = document.getElementById('searchForm');
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const q = document.getElementById("query").value.trim();
-      if (!q) return false;
-
-      const market = marketEl.value;
-      const tag = tagEl.value.trim() || DEFAULT_TAG;
-
-      const base = MARKET_DOMAINS[market] || MARKET_DOMAINS[DEFAULT_MARKET];
-      const params = new URLSearchParams({ k: q, tag });
-      const url = base + "?" + params.toString();
-
-      window.location.href = url;
-      return false;
-    }
-
-    function guardarPagina() {
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (isMobile) {
-        alert("👉 Para añadir esta página a tu pantalla de inicio:\n\n• Android: menú ⋮ → 'Añadir a pantalla de inicio'.\n• iPhone/iPad: botón Compartir → 'Añadir a pantalla de inicio'.");
-      } else {
-        alert("⭐ Para añadir a favoritos en tu navegador:\n\n• Windows/Linux: pulsa Ctrl+D\n• Mac: pulsa Cmd+D");
-      }
-    }
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js")
-        .then(() => console.log("✅ Service Worker registrado"))
-        .catch(err => console.error("SW error", err));
-    }
+      const query = encodeURIComponent(document.getElementById('query').value.trim());
+      if (!query) return;
+      const affiliateID = "garrapachuno-21";
+      const amazonURL = `https://www.amazon.es/s?k=${query}&tag=${affiliateID}`;
+      window.location.href = amazonURL;
+    });
   </script>
 </body>
 </html>
