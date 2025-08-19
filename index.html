@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alzo Browser - Buscador Amazon</title>
+  <title>Buscador en Amazon</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <style>
@@ -19,7 +19,7 @@
       text-align: center;
     }
     h1 {
-      font-size: 1.2em;
+      font-size: 1.5em;
       margin-bottom: 20px;
       color: #ff9900;
     }
@@ -39,20 +39,40 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      margin-bottom: 10px;
     }
     button:hover {
       background-color: #e68a00;
     }
+    #addButton {
+      display: none;
+      margin-top: 10px;
+    }
+    footer {
+      font-size: 0.8em;
+      color: #555;
+      margin-top: 20px;
+      max-width: 90%;
+    }
   </style>
 </head>
 <body>
-  <h1>Escribe lo que buscas y te lo mostraré en Amazon</h1>
+  <h1>Buscador en Amazon</h1>
+
   <form id="searchForm">
-    <input type="text" id="query" placeholder="Buscar producto..." required>
+    <input type="text" id="query" placeholder="Escribe lo que buscas..." required>
     <button type="submit">Buscar</button>
   </form>
 
+  <button id="addButton">Añadir a pantalla de inicio</button>
+
+  <footer>
+    Participo en el <strong>Programa de Afiliados de Amazon</strong> 
+    para obtener ingresos por las compras que cumplan los requisitos.
+  </footer>
+
   <script>
+    // Búsqueda en Amazon con afiliado
     const form = document.getElementById('searchForm');
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -61,6 +81,24 @@
       const affiliateID = "garrapachuno-21";
       const amazonURL = `https://www.amazon.es/s?k=${query}&tag=${affiliateID}`;
       window.location.href = amazonURL;
+    });
+
+    // PWA: Añadir a pantalla de inicio
+    let deferredPrompt;
+    const addBtn = document.getElementById('addButton');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      addBtn.style.display = 'inline-block';
+    });
+
+    addBtn.addEventListener('click', () => {
+      addBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        deferredPrompt = null;
+      });
     });
   </script>
 </body>
