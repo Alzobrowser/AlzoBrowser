@@ -1,11 +1,21 @@
-self.addEventListener("install", event => {
-  console.log("Service Worker instalado");
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open("app-cache").then((cache) => {
+      return cache.addAll([
+        "./",
+        "./index.html",
+        "./manifest.json",
+        "./icon-192.png",
+        "./icon-512.png"
+      ]);
+    })
+  );
 });
 
-self.addEventListener("fetch", event => {
-  event.respondWith(
-    fetch(event.request).catch(() =>
-      new Response("⚠️ No tienes conexión. Vuelve a intentarlo.")
-    )
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) => {
+      return response || fetch(e.request);
+    })
   );
 });
