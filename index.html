@@ -4,8 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Buscador en Amazon</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon-192.png">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon-192.png">
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(console.error);
+    }
+  </script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -67,7 +72,7 @@
   <button id="addButton">Añadir a pantalla de inicio</button>
 
   <footer>
-    Participo en el <strong>Programa de Afiliados de Amazon</strong> 
+    Participamos en el <strong>Programa de Afiliados de Amazon</strong> 
     para obtener ingresos por las compras que cumplan los requisitos.
   </footer>
 
@@ -96,7 +101,7 @@
     addBtn.addEventListener('click', () => {
       addBtn.style.display = 'none';
       deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
+      deferredPrompt.userChoice.then(() => {
         deferredPrompt = null;
       });
     });
