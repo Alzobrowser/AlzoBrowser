@@ -1,110 +1,111 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Buscador en Amazon</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#ffffff" />
-  <link rel="icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json">
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 0;
+      padding: 20px;
+      background: #f8f8f8;
     }
-    .container {
-      margin-top: 30px;
-    }
-    .logo {
-      width: 150px;
-      height: 150px;
-      margin: 0 auto 15px;
-      display: block;
-    }
-    h1 {
-      font-size: 26px;
+    img.logo {
+      max-width: 120px;
       margin-bottom: 10px;
     }
-    p {
-      margin: 10px 0 20px;
+    h1 {
+      color: #232f3e;
+      font-size: 24px;
+      margin-top: 0;
     }
     input[type="text"] {
+      width: 80%;
       padding: 10px;
-      width: 70%;
-      max-width: 300px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      font-size: 16px;
+      margin-bottom: 10px;
     }
     button {
       padding: 10px 15px;
-      margin-top: 10px;
+      font-size: 16px;
+      margin-top: 5px;
       border: none;
       border-radius: 6px;
       background: #ff9900;
       color: #fff;
-      font-weight: bold;
       cursor: pointer;
     }
     button:hover {
       background: #e68a00;
     }
+    .filters {
+      margin: 10px auto;
+      text-align: left;
+      max-width: 300px;
+      font-size: 15px;
+    }
+    .filters label {
+      display: block;
+      margin: 5px 0;
+    }
+    .install-btn {
+      margin-top: 20px;
+      display: none;
+    }
     footer {
-      margin-top: 40px;
+      margin-top: 30px;
       font-size: 12px;
-      color: #666;
-      padding: 0 20px;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Logotipo -->
-    <img src="icon-192.png" alt="Logo" class="logo">
+  <!-- Logo -->
+  <img src="icon-192.png" alt="Logo" class="logo">
 
-    <!-- Título -->
-    <h1>Buscador en Amazon</h1>
+  <!-- Título -->
+  <h1>Buscador en Amazon</h1>
 
-    <!-- Texto introductorio -->
-    <p>Escribe lo que buscas y te lo mostraré en Amazon</p>
+  <!-- Barra de búsqueda -->
+  <input type="text" id="searchInput" placeholder="Escribe lo que buscas...">
+  <br>
+  <button onclick="searchAmazon()">Buscar</button>
 
-    <!-- Barra de búsqueda -->
-    <form id="searchForm">
-      <input type="text" id="query" placeholder="Buscar productos..." required />
-      <button type="submit">Buscar</button>
-    </form>
-
-    <!-- Botón de añadir a pantalla de inicio -->
-    <button id="installBtn" style="display:none;">
-      📱 Añadir a pantalla de inicio
-    </button>
-
-    <!-- Aviso de Amazon Afiliados -->
-    <footer>
-      <p>
-        Participo en el Programa de Afiliados de Amazon, un programa de publicidad para afiliados 
-        diseñado para ofrecer un modo de obtener comisiones mediante la publicidad y enlaces a Amazon.es.
-      </p>
-    </footer>
+  <!-- Filtros -->
+  <div class="filters">
+    <label><input type="checkbox" id="primeFilter"> Prime</label>
+    <label><input type="checkbox" id="amazonFilter"> Vendido y enviado por Amazon</label>
   </div>
 
+  <!-- Botón instalar -->
+  <button id="installBtn" class="install-btn">📱 Añadir a pantalla de inicio</button>
+
+  <!-- Aviso legal -->
+  <footer>
+    <p>Esta web participa en el Programa de Afiliados de Amazon EU, un programa de publicidad para afiliados diseñado para ofrecer a sitios web un modo de obtener comisiones por publicidad, publicitando e incluyendo enlaces a Amazon.es.</p>
+  </footer>
+
   <script>
-    // Búsqueda con ID de afiliado fijo
-    const affiliateId = "garrapachuno-21";
-    const country = "es"; // Amazon España
+    // Función de búsqueda con filtros
+    function searchAmazon() {
+      const query = document.getElementById("searchInput").value.trim();
+      if (!query) return;
 
-    document.getElementById("searchForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const query = document.getElementById("query").value.trim();
-      if(query){
-        const url = `https://www.amazon.${country}/s?k=${encodeURIComponent(query)}&tag=${affiliateId}`;
-        window.location.href = url;
+      let url = "https://www.amazon.es/s?k=" + encodeURIComponent(query) + "&tag=garrapachuno-21";
+
+      if (document.getElementById("primeFilter").checked) {
+        url += "&rh=p_85:1";
       }
-    });
+      if (document.getElementById("amazonFilter").checked) {
+        url += "&emi=AN1VRQENFRJN5";
+      }
 
-    // PWA instalación
+      window.location.href = url;
+    }
+
+    // Botón de instalación PWA
     let deferredPrompt;
     const installBtn = document.getElementById("installBtn");
 
@@ -119,17 +120,18 @@
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === "accepted") {
-          installBtn.style.display = "none";
+          console.log("✅ El usuario instaló la app");
         }
         deferredPrompt = null;
+        installBtn.style.display = "none";
       }
     });
 
-    // Registrar Service Worker
+    // Registrar el service worker
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js").then(() => {
-        console.log("Service Worker registrado");
-      });
+      navigator.serviceWorker.register("sw.js")
+        .then(() => console.log("✅ Service Worker registrado"))
+        .catch(err => console.error("❌ Error en Service Worker:", err));
     }
   </script>
 </body>
