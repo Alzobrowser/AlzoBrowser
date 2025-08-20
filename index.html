@@ -40,7 +40,7 @@
     }
     button {
       padding: 10px 15px;
-      margin-left: 5px;
+      margin-top: 10px;
       border: none;
       border-radius: 6px;
       background: #ff9900;
@@ -77,7 +77,7 @@
     </form>
 
     <!-- Botón de añadir a pantalla de inicio -->
-    <button id="installBtn" style="display:none; margin-top:15px;">
+    <button id="installBtn" style="display:none;">
       📱 Añadir a pantalla de inicio
     </button>
 
@@ -124,6 +124,13 @@
         deferredPrompt = null;
       }
     });
+
+    // Registrar Service Worker
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").then(() => {
+        console.log("Service Worker registrado");
+      });
+    }
   </script>
 </body>
 </html>
