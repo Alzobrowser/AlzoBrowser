@@ -1,19 +1,21 @@
 {
   "name": "Buscador en Amazon",
-  "short_name": "Amazon",
+  "short_name": "AmazonBuscador",
+  "description": "Buscador rápido en Amazon con enlaces de afiliado.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ff9900",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
