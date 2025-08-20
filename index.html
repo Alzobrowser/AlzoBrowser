@@ -62,27 +62,21 @@
   </style>
 </head>
 <body>
-  <!-- Logo -->
   <img src="icon-192.png" alt="Logo" class="logo">
 
-  <!-- Título -->
   <h1>Buscador en Amazon</h1>
 
-  <!-- Barra de búsqueda -->
   <input type="text" id="searchInput" placeholder="Escribe lo que buscas...">
   <br>
   <button onclick="searchAmazon()">Buscar</button>
 
-  <!-- Filtros -->
   <div class="filters">
     <label><input type="checkbox" id="primeFilter"> Prime</label>
     <label><input type="checkbox" id="amazonFilter"> Vendido y enviado por Amazon</label>
   </div>
 
-  <!-- Botón instalar -->
   <button id="installBtn" class="install-btn">📱 Añadir a pantalla de inicio</button>
 
-  <!-- Aviso legal -->
   <footer>
     <p>Esta web participa en el Programa de Afiliados de Amazon EU, un programa de publicidad para afiliados diseñado para ofrecer a sitios web un modo de obtener comisiones por publicidad, publicitando e incluyendo enlaces a Amazon.es.</p>
   </footer>
@@ -99,7 +93,7 @@
         url += "&rh=p_85:1";
       }
       if (document.getElementById("amazonFilter").checked) {
-        url += "&emi=AN1VRQENFRJN5";
+        url += "&rh=p_6:AN1VRQENFRJN5";
       }
 
       window.location.href = url;
