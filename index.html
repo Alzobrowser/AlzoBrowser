@@ -72,7 +72,6 @@
 
   <div class="filters">
     <label><input type="checkbox" id="primeFilter"> Prime</label>
-    <label><input type="checkbox" id="amazonFilter"> Vendido y enviado por Amazon</label>
   </div>
 
   <button id="installBtn" class="install-btn">📱 Añadir a pantalla de inicio</button>
@@ -91,9 +90,6 @@
 
       if (document.getElementById("primeFilter").checked) {
         url += "&rh=p_85:1";
-      }
-      if (document.getElementById("amazonFilter").checked) {
-        url += "&emi=AN1VRQENFRJN5&rh=p_6:AN1VRQENFRJN5";
       }
 
       window.location.href = url;
@@ -129,5 +125,4 @@
     }
   </script>
 </body>
-    </html>
-  
+</html>
